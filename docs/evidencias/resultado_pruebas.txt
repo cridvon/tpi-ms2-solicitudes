@@ -1,0 +1,29 @@
+Dominio
+  [OK]    CP-01 PENDIENTE puede pasar a EN_PROCESO y RECHAZADA
+  [OK]    CP-02 PENDIENTE no puede pasar directo a RESUELTA
+  [OK]    CP-03 los estados finales no admiten ninguna transición
+  [OK]    CP-04 Estado.desdeTexto rechaza un texto desconocido
+  [OK]    CP-05 los plazos dependen del tipo y de la prioridad
+  [OK]    CP-06 cada tipo define su responsable inicial
+  [OK]    CP-07 una solicitud nueva nace PENDIENTE con el responsable de su tipo
+  [OK]    CP-08 no se puede asignar responsable a una solicitud cerrada
+  [OK]    CP-09 Prioridad.desdeNivel rechaza valores fuera de 1-3
+Servicio
+  [OK]    CP-10 registrar asigna ids correlativos
+  [OK]    CP-11 registrar rechaza un nombre vacío
+  [OK]    CP-12 registrar rechaza un email sin arroba
+  [OK]    CP-13 registrar con tipo null informa error (antes: NullPointerException)
+  [OK]    CP-14 con varios errores se informa el primero (orden de validación)
+  [OK]    CP-15 cambiar estado de una solicitud inexistente
+  [OK]    CP-16 cambiar estado con una transición no permitida
+  [OK]    CP-17 SIN ASIGNAR no se puede asignar manualmente
+  [OK]    CP-18 los filtros se pueden combinar
+  [OK]    CP-19 el reporte vacío muestra total 0 y resumen en cero
+  [OK]    CP-20 el reporte incluye plazo, responsable y estudiante
+Persistencia
+  [OK]    CP-21 guardar y recargar conserva las solicitudes
+  [OK]    CP-22 lee el CSV generado por la versión inicial (compatibilidad)
+  [OK]    CP-23 un archivo corrupto se informa (no se silencia el error)
+  [OK]    CP-24 los ids continúan correlativos después de recargar
+
+Resultado: 24 aprobadas, 0 fallidas, total 24

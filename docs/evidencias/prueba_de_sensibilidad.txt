@@ -1,0 +1,11 @@
+Prueba de sensibilidad del golden master
+----------------------------------------
+Se cambió deliberadamente un plazo (CERTIFICADO/ALTA: 3 -> 4 días) en la versión refactorizada
+y se ejecutó scripts/verificar.sh. Resultado: la verificación detecta el cambio y falla.
+
+-[1] CERTIFICADO | Prioridad: ALTA | Estado: RESUELTA | Resp: Bedelía | Plazo: 3 días
++[1] CERTIFICADO | Prioridad: ALTA | Estado: RESUELTA | Resp: Bedelía | Plazo: 4 días
+VERIFICACIÓN FALLÓ: el comportamiento externo cambió.
+
+Conclusión: la prueba de caracterización no es "decorativa": si un refactoring altera el comportamiento
+externo, se detecta de inmediato.

@@ -1,0 +1,12 @@
+4807c09  Sistema base: gestión de solicitudes académicas (versión inicial)
+    -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.
+69ca3c8  Diagnóstico: calidad interna/externa, 13 code smells priorizados y plan de refactoring
+    -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.
+592b1f1  Refactoring 1: Replace Type Code with Enum, Encapsulate Field y Move Method
+    -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.
+048e111  Refactoring 2: Introduce Parameter Object, Extract Class (validador) y Extract Method
+    -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.
+e032241  Refactoring 3: Extract Class (reporte) y Parameterize Method (búsquedas)
+    -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.
+c299a1e  Refactoring 4: Extract Interface (repositorio), Replace Error Code with Exception y reorganización en paquetes
+    -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.
