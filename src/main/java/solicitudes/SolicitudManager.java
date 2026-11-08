@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 import solicitudes.dominio.DatoInvalidoException;
 import solicitudes.dominio.Estado;
@@ -14,6 +15,7 @@ import solicitudes.dominio.ReglaDeNegocioException;
 import solicitudes.dominio.Responsable;
 import solicitudes.dominio.Solicitud;
 import solicitudes.dominio.Tipo;
+import solicitudes.reporte.ReporteTexto;
 
 public class SolicitudManager {
     private ArrayList<Solicitud> solicitudes = new ArrayList<Solicitud>();
@@ -96,69 +98,34 @@ public class SolicitudManager {
         return null;
     }
 
-    public ArrayList<Solicitud> buscarPorEstado(String estado) {
+    private ArrayList<Solicitud> buscar(Predicate<Solicitud> criterio) {
         ArrayList<Solicitud> resultado = new ArrayList<Solicitud>();
         for (Solicitud solicitud : solicitudes) {
-            if (solicitud.getEstado().name().equals(estado)) {
+            if (criterio.test(solicitud)) {
                 resultado.add(solicitud);
             }
         }
         return resultado;
+    }
+
+    public ArrayList<Solicitud> buscarPorEstado(String estado) {
+        return buscar(s -> s.getEstado().name().equals(estado));
     }
 
     public ArrayList<Solicitud> buscarPorTipo(String tipo) {
-        ArrayList<Solicitud> resultado = new ArrayList<Solicitud>();
-        for (Solicitud solicitud : solicitudes) {
-            if (solicitud.getTipo().name().equals(tipo)) {
-                resultado.add(solicitud);
-            }
-        }
-        return resultado;
+        return buscar(s -> s.getTipo().name().equals(tipo));
     }
 
     public ArrayList<Solicitud> buscarPorResponsable(String responsable) {
-        ArrayList<Solicitud> resultado = new ArrayList<Solicitud>();
-        for (Solicitud solicitud : solicitudes) {
-            if (solicitud.getResponsable().nombre().equals(responsable)) {
-                resultado.add(solicitud);
-            }
-        }
-        return resultado;
+        return buscar(s -> s.getResponsable().nombre().equals(responsable));
     }
 
     public ArrayList<Solicitud> buscarPorPrioridad(int prioridad) {
-        ArrayList<Solicitud> resultado = new ArrayList<Solicitud>();
-        for (Solicitud solicitud : solicitudes) {
-            if (solicitud.getPrioridad().nivel() == prioridad) {
-                resultado.add(solicitud);
-            }
-        }
-        return resultado;
+        return buscar(s -> s.getPrioridad().nivel() == prioridad);
     }
 
     public String reporte() {
-        StringBuilder texto = new StringBuilder();
-        texto.append("=== REPORTE DE SOLICITUDES ===\n");
-        texto.append("Total: ").append(solicitudes.size()).append("\n");
-        int[] porEstado = new int[Estado.values().length];
-        for (Solicitud solicitud : solicitudes) {
-            texto.append("[").append(solicitud.getId()).append("] ")
-                    .append(solicitud.getTipo().name())
-                    .append(" | Prioridad: ").append(solicitud.getPrioridad().name())
-                    .append(" | Estado: ").append(solicitud.getEstado().name())
-                    .append(" | Resp: ").append(solicitud.getResponsable().nombre())
-                    .append(" | Plazo: ").append(solicitud.plazoDias()).append(" días\n");
-            texto.append("    Estudiante: ").append(solicitud.getEstudiante().getNombre())
-                    .append(" (").append(solicitud.getEstudiante().getEmail()).append(") legajo ")
-                    .append(solicitud.getEstudiante().getLegajo()).append("\n");
-            texto.append("    Detalle: ").append(solicitud.getDescripcion()).append("\n");
-            porEstado[solicitud.getEstado().ordinal()]++;
-        }
-        texto.append("--- Resumen por estado ---\n");
-        for (Estado estado : Estado.values()) {
-            texto.append(estado.name()).append(": ").append(porEstado[estado.ordinal()]).append("\n");
-        }
-        return texto.toString();
+        return new ReporteTexto().generar(solicitudes);
     }
 
     void guardar() {
