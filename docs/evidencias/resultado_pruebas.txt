@@ -15,6 +15,8 @@ Servicio
   [OK]    CP-13 registrar con tipo null informa error (antes: NullPointerException)
   [OK]    CP-14 con varios errores se informa el primero (orden de validación)
   [OK]    CP-15 cambiar estado de una solicitud inexistente
+  [OK]    CP-15b la excepción de solicitud inexistente conserva el id consultado
+  [OK]    CP-15c registrar(null) informa un error claro
   [OK]    CP-16 cambiar estado con una transición no permitida
   [OK]    CP-17 SIN ASIGNAR no se puede asignar manualmente
   [OK]    CP-18 los filtros se pueden combinar
@@ -25,5 +27,6 @@ Persistencia
   [OK]    CP-22 lee el CSV generado por la versión inicial (compatibilidad)
   [OK]    CP-23 un archivo corrupto se informa (no se silencia el error)
   [OK]    CP-24 los ids continúan correlativos después de recargar
+  [OK]    CP-25 al guardar no queda un archivo temporal olvidado
 
-Resultado: 24 aprobadas, 0 fallidas, total 24
+Resultado: 27 aprobadas, 0 fallidas, total 27

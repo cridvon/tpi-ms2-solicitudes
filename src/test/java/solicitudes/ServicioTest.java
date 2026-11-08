@@ -40,6 +40,16 @@ public class ServicioTest {
         prueba("CP-15", "cambiar estado de una solicitud inexistente", () ->
                 assertEquals("solicitud no encontrada", assertThrows(SolicitudNoEncontradaException.class,
                         () -> servicio().cambiarEstado(5, "EN_PROCESO"))));
+        prueba("CP-15b", "la excepción de solicitud inexistente conserva el id consultado", () -> {
+            try {
+                servicio().cambiarEstado(42, "EN_PROCESO");
+                throw new AssertionError("se esperaba una excepción");
+            } catch (SolicitudNoEncontradaException e) {
+                assertEquals(42, e.getId());
+            }
+        });
+        prueba("CP-15c", "registrar(null) informa un error claro", () ->
+                assertTrue(assertThrows(NullPointerException.class, () -> servicio().registrar(null)).contains("obligatorios")));
         prueba("CP-16", "cambiar estado con una transición no permitida", () -> {
             SolicitudService s = servicio();
             s.registrar(datos("BAJA", 1));

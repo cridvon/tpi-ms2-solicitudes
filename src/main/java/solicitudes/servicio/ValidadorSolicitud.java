@@ -1,5 +1,7 @@
 package solicitudes.servicio;
 
+import java.util.Objects;
+
 import solicitudes.dominio.DatoInvalidoException;
 import solicitudes.dominio.Prioridad;
 import solicitudes.dominio.Tipo;
@@ -11,6 +13,7 @@ public final class ValidadorSolicitud {
     }
 
     public static void validar(NuevaSolicitud datos) {
+        Objects.requireNonNull(datos, "los datos de la solicitud son obligatorios");
         if (estaVacio(datos.nombre())) {
             throw new DatoInvalidoException("el nombre es obligatorio");
         }

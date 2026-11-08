@@ -88,7 +88,7 @@ Beneficio: el servicio se prueba con `RepositorioMemoria` (sin disco), los error
 | Método más largo | `reporte()`: 69 líneas | 13 líneas en el código de negocio (`Main.main` es un guion lineal de 40 líneas) |
 | Archivos de código | 5 | 21 (paquetes `dominio`, `servicio`, `persistencia`, `reporte`, `app`) |
 | Errores | códigos `-1…-5` y `catch` vacío | excepciones con mensaje |
-| Pruebas automatizadas | 0 (no se podía probar sin disco) | 24 (`docs/evidencias/resultado_pruebas.txt`) |
+| Pruebas automatizadas | 0 (no se podía probar sin disco) | 27 (`docs/evidencias/resultado_pruebas.txt`) |
 | Pasos para agregar un tipo de solicitud | modificar 3 métodos | 1 línea en el enum `Tipo` |
 
 ## Mejora de comportamiento declarada

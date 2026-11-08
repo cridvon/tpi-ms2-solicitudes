@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +52,12 @@ public class RepositorioCsv extends RepositorioMemoria {
         for (Solicitud solicitud : obtenerTodas()) {
             lineas.add(aLinea(solicitud));
         }
+        Path temporal = archivo.resolveSibling(archivo.getFileName() + ".tmp");
         try {
-            Files.write(archivo, lineas, StandardCharsets.UTF_8);
+            // Se escribe en un archivo temporal y luego se reemplaza: si algo falla a mitad de camino
+            // el archivo original queda intacto.
+            Files.write(temporal, lineas, StandardCharsets.UTF_8);
+            Files.move(temporal, archivo, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException e) {
             throw new PersistenciaException("No se pudo escribir " + archivo, e);
         }

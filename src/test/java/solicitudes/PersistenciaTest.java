@@ -59,5 +59,12 @@ public class PersistenciaTest {
             SolicitudService recargado = new SolicitudService(new RepositorioCsv(archivo));
             assertEquals(3, recargado.registrar(new NuevaSolicitud("Eva", "e@b.com", "3", "BAJA", 1, "z")).getId());
         });
+        prueba("CP-25", "al guardar no queda un archivo temporal olvidado", () -> {
+            Path archivo = temporal();
+            SolicitudService s = new SolicitudService(new RepositorioCsv(archivo));
+            s.registrar(new NuevaSolicitud("Ana", "a@b.com", "1", "BAJA", 1, "x"));
+            assertTrue(Files.exists(archivo));
+            assertFalse(Files.exists(archivo.resolveSibling("solicitudes.csv.tmp")));
+        });
     }
 }
