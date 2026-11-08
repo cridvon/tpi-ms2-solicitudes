@@ -10,3 +10,9 @@ e032241  Refactoring 3: Extract Class (reporte) y Parameterize Method (búsqueda
     -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.
 c299a1e  Refactoring 4: Extract Interface (repositorio), Replace Error Code with Exception y reorganización en paquetes
     -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.
+12f040f  Pruebas: 24 casos automatizados, verificación por commit y documentación de refactorings
+    -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.
+11719d0  Code review: checklist técnico, 8 observaciones y 3 correcciones con pruebas
+    -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.
+26ca08e  Documentación final: README, decisiones técnicas (ADR) y declaración de uso de IA
+    -> VERIFICACIÓN OK: el comportamiento externo coincide con el de la versión inicial.

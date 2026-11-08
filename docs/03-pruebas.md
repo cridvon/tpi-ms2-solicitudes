@@ -8,7 +8,7 @@
 | Evidencia | Archivo |
 |---|---|
 | Salida de la versión inicial (referencia) | `docs/evidencias/salida_esperada.txt` |
-| Verificación en cada commit (6 de 6 coinciden) | `docs/evidencias/verificacion_por_commit.txt` |
+| Verificación en cada commit (9 de 9 commits previos coinciden) | `docs/evidencias/verificacion_por_commit.txt` |
 | Resultado de las pruebas automatizadas (27/27) | `docs/evidencias/resultado_pruebas.txt` |
 | Prueba de sensibilidad: un cambio de comportamiento se detecta | `docs/evidencias/prueba_de_sensibilidad.txt` |
 
@@ -44,7 +44,7 @@
 | CP-25 | Escritura del CSV | no queda archivo temporal |
 
 ## Cómo se verificó que el refactoring no alteró el comportamiento
-- Salida idéntica (`diff` vacío) en los 6 commits del historial.
+- Salida idéntica (`diff` vacío) en los 9 commits previos a este registro.
 - Archivo `solicitudes.csv` idéntico, lo que garantiza compatibilidad de datos entre versiones.
 - Las únicas diferencias deliberadas están declaradas en `docs/02-refactorings.md` (caso `tipo == null` y archivo corrupto).
 

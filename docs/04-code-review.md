@@ -10,7 +10,7 @@ Estado: ✔ cumple · ◐ cumple con observación · ✘ no cumple · ➜ correg
 
 | # | Categoría | Pregunta de la checklist | Estado | Referencia |
 |---|---|---|---|---|
-| 1 | Lógica y funcionalidad | ¿La versión refactorizada produce la misma salida que la inicial? | ✔ | `verificar.sh` en los 6 commits |
+| 1 | Lógica y funcionalidad | ¿La versión refactorizada produce la misma salida que la inicial? | ✔ | `verificar.sh` en los 9 commits previos |
 | 2 | Lógica y funcionalidad | ¿Se cubren los casos borde (nulos, ids inexistentes, transiciones inválidas)? | ➜ | OBS-02 |
 | 3 | Lógica y funcionalidad | ¿El orden de validación se mantiene respecto de la versión inicial? | ✔ | CP-14 |
 | 4 | Legibilidad | ¿Los nombres expresan la intención (sin `l`, `s`, `p/e/r/x`)? | ✔ | todo el código |
