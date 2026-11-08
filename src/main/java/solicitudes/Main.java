@@ -58,14 +58,14 @@ public class Main {
         SolicitudManager m = new SolicitudManager();
 
         System.out.println("== 1. Registro de solicitudes ==");
-        mostrarRegistro(m.registrar("Ana Gómez", "ana.gomez@mail.com", "20001", "CERTIFICADO", 1, "Certificado de alumno regular"));
-        mostrarRegistro(m.registrar("Luis Pérez", "luis.perez@mail.com", "20002", "EQUIVALENCIA", 2, "Equivalencia de Matemática"));
-        mostrarRegistro(m.registrar("Marta Ruiz", "marta.ruiz@mail.com", "20003", "BAJA", 3, "Baja de la materia Inglés"));
-        mostrarRegistro(m.registrar("", "x@mail.com", "20004", "CONSULTA", 1, "Consulta general"));
-        mostrarRegistro(m.registrar("Pedro Sosa", "sin-arroba", "20005", "CONSULTA", 1, "Consulta general"));
-        mostrarRegistro(m.registrar("Pedro Sosa", "pedro@mail.com", "20005", "OTRO", 1, "Consulta general"));
-        mostrarRegistro(m.registrar("Pedro Sosa", "pedro@mail.com", "20005", "CONSULTA", 7, "Consulta general"));
-        mostrarRegistro(m.registrar("Pedro Sosa", "pedro@mail.com", "20005", "CONSULTA", 1, "  "));
+        mostrarRegistro(m.registrar(new NuevaSolicitud("Ana Gómez", "ana.gomez@mail.com", "20001", "CERTIFICADO", 1, "Certificado de alumno regular")));
+        mostrarRegistro(m.registrar(new NuevaSolicitud("Luis Pérez", "luis.perez@mail.com", "20002", "EQUIVALENCIA", 2, "Equivalencia de Matemática")));
+        mostrarRegistro(m.registrar(new NuevaSolicitud("Marta Ruiz", "marta.ruiz@mail.com", "20003", "BAJA", 3, "Baja de la materia Inglés")));
+        mostrarRegistro(m.registrar(new NuevaSolicitud("", "x@mail.com", "20004", "CONSULTA", 1, "Consulta general")));
+        mostrarRegistro(m.registrar(new NuevaSolicitud("Pedro Sosa", "sin-arroba", "20005", "CONSULTA", 1, "Consulta general")));
+        mostrarRegistro(m.registrar(new NuevaSolicitud("Pedro Sosa", "pedro@mail.com", "20005", "OTRO", 1, "Consulta general")));
+        mostrarRegistro(m.registrar(new NuevaSolicitud("Pedro Sosa", "pedro@mail.com", "20005", "CONSULTA", 7, "Consulta general")));
+        mostrarRegistro(m.registrar(new NuevaSolicitud("Pedro Sosa", "pedro@mail.com", "20005", "CONSULTA", 1, "  ")));
 
         System.out.println("== 2. Cambios de estado ==");
         mostrarCambio(m.cambiarEstado(1, "EN_PROCESO"));

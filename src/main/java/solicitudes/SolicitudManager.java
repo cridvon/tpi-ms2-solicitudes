@@ -27,36 +27,22 @@ public class SolicitudManager {
         return solicitudes.size();
     }
 
-    // devuelve el id (> 0) o un codigo de error (< 0)
-    // -1 nombre, -2 email, -3 tipo, -4 prioridad, -5 descripcion
-    public int registrar(String nombre, String email, String legajo, String tipo, int prioridad, String descripcion) {
-        if (nombre == null || nombre.trim().equals("")) {
-            return -1;
+    // devuelve el id (> 0) o un codigo de error (< 0), ver ValidadorSolicitud
+    public int registrar(NuevaSolicitud datos) {
+        int codigo = ValidadorSolicitud.validar(datos);
+        if (codigo != ValidadorSolicitud.OK) {
+            return codigo;
         }
-        if (email == null || !email.contains("@") || !email.contains(".") || email.indexOf("@") == 0) {
-            return -2;
-        }
-        Tipo tipoSolicitud;
-        try {
-            tipoSolicitud = Tipo.desdeTexto(tipo);
-        } catch (DatoInvalidoException e) {
-            return -3;
-        }
-        Prioridad prioridadSolicitud;
-        try {
-            prioridadSolicitud = Prioridad.desdeNivel(prioridad);
-        } catch (DatoInvalidoException e) {
-            return -4;
-        }
-        if (descripcion == null || descripcion.trim().equals("")) {
-            return -5;
-        }
-        Solicitud solicitud = new Solicitud(siguienteId, new Estudiante(nombre, email, legajo),
-                tipoSolicitud, prioridadSolicitud, descripcion);
-        siguienteId++;
+        Solicitud solicitud = crearSolicitud(datos);
         solicitudes.add(solicitud);
         guardar();
         return solicitud.getId();
+    }
+
+    private Solicitud crearSolicitud(NuevaSolicitud datos) {
+        Estudiante estudiante = new Estudiante(datos.nombre(), datos.email(), datos.legajo());
+        return new Solicitud(siguienteId++, estudiante, Tipo.desdeTexto(datos.tipo()),
+                Prioridad.desdeNivel(datos.prioridad()), datos.descripcion());
     }
 
     // 0 ok, -1 no existe, -2 estado invalido, -3 transicion no permitida
