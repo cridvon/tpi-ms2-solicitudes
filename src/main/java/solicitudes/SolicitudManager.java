@@ -6,16 +6,25 @@ import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import solicitudes.dominio.DatoInvalidoException;
+import solicitudes.dominio.Estado;
+import solicitudes.dominio.Estudiante;
+import solicitudes.dominio.Prioridad;
+import solicitudes.dominio.ReglaDeNegocioException;
+import solicitudes.dominio.Responsable;
+import solicitudes.dominio.Solicitud;
+import solicitudes.dominio.Tipo;
+
 public class SolicitudManager {
-    public ArrayList<Solicitud> l = new ArrayList<Solicitud>();
-    public ArrayList<Responsable> resps = new ArrayList<Responsable>();
-    int sig = 1;
+    private ArrayList<Solicitud> solicitudes = new ArrayList<Solicitud>();
+    private int siguienteId = 1;
 
     public SolicitudManager() {
-        resps.add(new Responsable("Bedelía"));
-        resps.add(new Responsable("Dirección de Carrera"));
-        resps.add(new Responsable("Secretaría Académica"));
         cargar();
+    }
+
+    public int cantidad() {
+        return solicitudes.size();
     }
 
     // devuelve el id (> 0) o un codigo de error (< 0)
@@ -27,214 +36,154 @@ public class SolicitudManager {
         if (email == null || !email.contains("@") || !email.contains(".") || email.indexOf("@") == 0) {
             return -2;
         }
-        if (!(tipo.equals("CERTIFICADO") || tipo.equals("EQUIVALENCIA") || tipo.equals("BAJA") || tipo.equals("CONSULTA"))) {
+        Tipo tipoSolicitud;
+        try {
+            tipoSolicitud = Tipo.desdeTexto(tipo);
+        } catch (DatoInvalidoException e) {
             return -3;
         }
-        if (prioridad < 1 || prioridad > 3) {
+        Prioridad prioridadSolicitud;
+        try {
+            prioridadSolicitud = Prioridad.desdeNivel(prioridad);
+        } catch (DatoInvalidoException e) {
             return -4;
         }
         if (descripcion == null || descripcion.trim().equals("")) {
             return -5;
         }
-        Solicitud s = new Solicitud();
-        s.id = sig;
-        sig++;
-        s.est = new Estudiante();
-        s.est.nombre = nombre;
-        s.est.email = email;
-        s.est.legajo = legajo;
-        s.tipo = tipo;
-        s.prioridad = prioridad;
-        s.descripcion = descripcion;
-        s.estado = "PENDIENTE";
-        if (tipo.equals("CERTIFICADO")) {
-            s.responsable = "Bedelía";
-        } else if (tipo.equals("EQUIVALENCIA")) {
-            s.responsable = "Dirección de Carrera";
-        } else if (tipo.equals("BAJA")) {
-            s.responsable = "Secretaría Académica";
-        } else {
-            s.responsable = "SIN ASIGNAR";
-        }
-        l.add(s);
+        Solicitud solicitud = new Solicitud(siguienteId, new Estudiante(nombre, email, legajo),
+                tipoSolicitud, prioridadSolicitud, descripcion);
+        siguienteId++;
+        solicitudes.add(solicitud);
         guardar();
-        return s.id;
+        return solicitud.getId();
     }
 
     // 0 ok, -1 no existe, -2 estado invalido, -3 transicion no permitida
-    public int cambiarEstado(int id, String nuevo) {
-        Solicitud s = null;
-        for (int i = 0; i < l.size(); i++) {
-            if (l.get(i).id == id) {
-                s = l.get(i);
-            }
-        }
-        if (s == null) {
+    public int cambiarEstado(int id, String nuevoEstado) {
+        Solicitud solicitud = buscarPorId(id);
+        if (solicitud == null) {
             return -1;
         }
-        if (!(nuevo.equals("PENDIENTE") || nuevo.equals("EN_PROCESO") || nuevo.equals("RESUELTA") || nuevo.equals("RECHAZADA"))) {
+        Estado estado;
+        try {
+            estado = Estado.desdeTexto(nuevoEstado);
+        } catch (DatoInvalidoException e) {
             return -2;
         }
-        if (s.estado.equals("PENDIENTE")) {
-            if (!(nuevo.equals("EN_PROCESO") || nuevo.equals("RECHAZADA"))) {
-                return -3;
-            }
-        } else if (s.estado.equals("EN_PROCESO")) {
-            if (!(nuevo.equals("RESUELTA") || nuevo.equals("RECHAZADA"))) {
-                return -3;
-            }
-        } else {
+        try {
+            solicitud.cambiarEstado(estado);
+        } catch (ReglaDeNegocioException e) {
             return -3;
         }
-        s.estado = nuevo;
         guardar();
         return 0;
     }
 
     // 0 ok, -1 no existe, -2 responsable invalido, -3 solicitud cerrada
-    public int asignarResponsable(int id, String r) {
-        Solicitud s = null;
-        for (int i = 0; i < l.size(); i++) {
-            if (l.get(i).id == id) {
-                s = l.get(i);
-            }
-        }
-        if (s == null) {
+    public int asignarResponsable(int id, String nombreResponsable) {
+        Solicitud solicitud = buscarPorId(id);
+        if (solicitud == null) {
             return -1;
         }
-        boolean ok = false;
-        for (int i = 0; i < resps.size(); i++) {
-            if (resps.get(i).nombre.equals(r)) {
-                ok = true;
-            }
-        }
-        if (!ok) {
+        Responsable responsable;
+        try {
+            responsable = Responsable.asignableDesdeNombre(nombreResponsable);
+        } catch (DatoInvalidoException e) {
             return -2;
         }
-        if (s.estado.equals("RESUELTA") || s.estado.equals("RECHAZADA")) {
+        try {
+            solicitud.asignarA(responsable);
+        } catch (ReglaDeNegocioException e) {
             return -3;
         }
-        s.responsable = r;
         guardar();
         return 0;
     }
 
-    public ArrayList<Solicitud> buscarPorEstado(String e) {
-        ArrayList<Solicitud> x = new ArrayList<Solicitud>();
-        for (int i = 0; i < l.size(); i++) {
-            if (l.get(i).estado.equals(e)) {
-                x.add(l.get(i));
+    private Solicitud buscarPorId(int id) {
+        for (Solicitud solicitud : solicitudes) {
+            if (solicitud.getId() == id) {
+                return solicitud;
             }
         }
-        return x;
+        return null;
     }
 
-    public ArrayList<Solicitud> buscarPorTipo(String t) {
-        ArrayList<Solicitud> x = new ArrayList<Solicitud>();
-        for (int i = 0; i < l.size(); i++) {
-            if (l.get(i).tipo.equals(t)) {
-                x.add(l.get(i));
+    public ArrayList<Solicitud> buscarPorEstado(String estado) {
+        ArrayList<Solicitud> resultado = new ArrayList<Solicitud>();
+        for (Solicitud solicitud : solicitudes) {
+            if (solicitud.getEstado().name().equals(estado)) {
+                resultado.add(solicitud);
             }
         }
-        return x;
+        return resultado;
     }
 
-    public ArrayList<Solicitud> buscarPorResponsable(String r) {
-        ArrayList<Solicitud> x = new ArrayList<Solicitud>();
-        for (int i = 0; i < l.size(); i++) {
-            if (l.get(i).responsable.equals(r)) {
-                x.add(l.get(i));
+    public ArrayList<Solicitud> buscarPorTipo(String tipo) {
+        ArrayList<Solicitud> resultado = new ArrayList<Solicitud>();
+        for (Solicitud solicitud : solicitudes) {
+            if (solicitud.getTipo().name().equals(tipo)) {
+                resultado.add(solicitud);
             }
         }
-        return x;
+        return resultado;
     }
 
-    public ArrayList<Solicitud> buscarPorPrioridad(int p) {
-        ArrayList<Solicitud> x = new ArrayList<Solicitud>();
-        for (int i = 0; i < l.size(); i++) {
-            if (l.get(i).prioridad == p) {
-                x.add(l.get(i));
+    public ArrayList<Solicitud> buscarPorResponsable(String responsable) {
+        ArrayList<Solicitud> resultado = new ArrayList<Solicitud>();
+        for (Solicitud solicitud : solicitudes) {
+            if (solicitud.getResponsable().nombre().equals(responsable)) {
+                resultado.add(solicitud);
             }
         }
-        return x;
+        return resultado;
+    }
+
+    public ArrayList<Solicitud> buscarPorPrioridad(int prioridad) {
+        ArrayList<Solicitud> resultado = new ArrayList<Solicitud>();
+        for (Solicitud solicitud : solicitudes) {
+            if (solicitud.getPrioridad().nivel() == prioridad) {
+                resultado.add(solicitud);
+            }
+        }
+        return resultado;
     }
 
     public String reporte() {
-        String t = "";
-        t = t + "=== REPORTE DE SOLICITUDES ===\n";
-        t = t + "Total: " + l.size() + "\n";
-        int p = 0, e = 0, r = 0, x = 0;
-        for (int i = 0; i < l.size(); i++) {
-            Solicitud s = l.get(i);
-            String pr;
-            if (s.prioridad == 1) {
-                pr = "ALTA";
-            } else if (s.prioridad == 2) {
-                pr = "MEDIA";
-            } else {
-                pr = "BAJA";
-            }
-            int plazo;
-            if (s.tipo.equals("CERTIFICADO")) {
-                if (s.prioridad == 1) {
-                    plazo = 3;
-                } else if (s.prioridad == 2) {
-                    plazo = 5;
-                } else {
-                    plazo = 10;
-                }
-            } else if (s.tipo.equals("EQUIVALENCIA")) {
-                if (s.prioridad == 1) {
-                    plazo = 15;
-                } else if (s.prioridad == 2) {
-                    plazo = 20;
-                } else {
-                    plazo = 30;
-                }
-            } else if (s.tipo.equals("BAJA")) {
-                if (s.prioridad == 1) {
-                    plazo = 5;
-                } else if (s.prioridad == 2) {
-                    plazo = 7;
-                } else {
-                    plazo = 10;
-                }
-            } else {
-                if (s.prioridad == 1) {
-                    plazo = 2;
-                } else if (s.prioridad == 2) {
-                    plazo = 5;
-                } else {
-                    plazo = 7;
-                }
-            }
-            t = t + "[" + s.id + "] " + s.tipo + " | Prioridad: " + pr + " | Estado: " + s.estado + " | Resp: " + s.responsable + " | Plazo: " + plazo + " días\n";
-            t = t + "    Estudiante: " + s.est.nombre + " (" + s.est.email + ") legajo " + s.est.legajo + "\n";
-            t = t + "    Detalle: " + s.descripcion + "\n";
-            if (s.estado.equals("PENDIENTE")) {
-                p++;
-            } else if (s.estado.equals("EN_PROCESO")) {
-                e++;
-            } else if (s.estado.equals("RESUELTA")) {
-                r++;
-            } else {
-                x++;
-            }
+        StringBuilder texto = new StringBuilder();
+        texto.append("=== REPORTE DE SOLICITUDES ===\n");
+        texto.append("Total: ").append(solicitudes.size()).append("\n");
+        int[] porEstado = new int[Estado.values().length];
+        for (Solicitud solicitud : solicitudes) {
+            texto.append("[").append(solicitud.getId()).append("] ")
+                    .append(solicitud.getTipo().name())
+                    .append(" | Prioridad: ").append(solicitud.getPrioridad().name())
+                    .append(" | Estado: ").append(solicitud.getEstado().name())
+                    .append(" | Resp: ").append(solicitud.getResponsable().nombre())
+                    .append(" | Plazo: ").append(solicitud.plazoDias()).append(" días\n");
+            texto.append("    Estudiante: ").append(solicitud.getEstudiante().getNombre())
+                    .append(" (").append(solicitud.getEstudiante().getEmail()).append(") legajo ")
+                    .append(solicitud.getEstudiante().getLegajo()).append("\n");
+            texto.append("    Detalle: ").append(solicitud.getDescripcion()).append("\n");
+            porEstado[solicitud.getEstado().ordinal()]++;
         }
-        t = t + "--- Resumen por estado ---\n";
-        t = t + "PENDIENTE: " + p + "\n";
-        t = t + "EN_PROCESO: " + e + "\n";
-        t = t + "RESUELTA: " + r + "\n";
-        t = t + "RECHAZADA: " + x + "\n";
-        return t;
+        texto.append("--- Resumen por estado ---\n");
+        for (Estado estado : Estado.values()) {
+            texto.append(estado.name()).append(": ").append(porEstado[estado.ordinal()]).append("\n");
+        }
+        return texto.toString();
     }
 
     void guardar() {
         try {
             PrintWriter w = new PrintWriter("solicitudes.csv");
-            for (int i = 0; i < l.size(); i++) {
-                Solicitud s = l.get(i);
-                w.println(s.id + ";" + s.est.nombre + ";" + s.est.email + ";" + s.est.legajo + ";" + s.tipo + ";" + s.prioridad + ";" + s.estado + ";" + s.responsable + ";" + s.descripcion);
+            for (Solicitud solicitud : solicitudes) {
+                Estudiante estudiante = solicitud.getEstudiante();
+                w.println(solicitud.getId() + ";" + estudiante.getNombre() + ";" + estudiante.getEmail() + ";"
+                        + estudiante.getLegajo() + ";" + solicitud.getTipo().name() + ";"
+                        + solicitud.getPrioridad().nivel() + ";" + solicitud.getEstado().name() + ";"
+                        + solicitud.getResponsable().nombre() + ";" + solicitud.getDescripcion());
             }
             w.close();
         } catch (Exception e) {
@@ -242,33 +191,26 @@ public class SolicitudManager {
     }
 
     void cargar() {
-        File f = new File("solicitudes.csv");
-        if (!f.exists()) {
+        File archivo = new File("solicitudes.csv");
+        if (!archivo.exists()) {
             return;
         }
         try {
-            BufferedReader br = new BufferedReader(new FileReader(f));
-            String linea = br.readLine();
+            BufferedReader lector = new BufferedReader(new FileReader(archivo));
+            String linea = lector.readLine();
             while (linea != null) {
                 String[] c = linea.split(";");
-                Solicitud s = new Solicitud();
-                s.id = Integer.parseInt(c[0]);
-                s.est = new Estudiante();
-                s.est.nombre = c[1];
-                s.est.email = c[2];
-                s.est.legajo = c[3];
-                s.tipo = c[4];
-                s.prioridad = Integer.parseInt(c[5]);
-                s.estado = c[6];
-                s.responsable = c[7];
-                s.descripcion = c[8];
-                l.add(s);
-                if (s.id >= sig) {
-                    sig = s.id + 1;
+                int id = Integer.parseInt(c[0]);
+                Solicitud solicitud = new Solicitud(id, new Estudiante(c[1], c[2], c[3]),
+                        Tipo.desdeTexto(c[4]), Prioridad.desdeNivel(Integer.parseInt(c[5])), c[8],
+                        Estado.desdeTexto(c[6]), Responsable.desdeNombre(c[7]));
+                solicitudes.add(solicitud);
+                if (id >= siguienteId) {
+                    siguienteId = id + 1;
                 }
-                linea = br.readLine();
+                linea = lector.readLine();
             }
-            br.close();
+            lector.close();
         } catch (Exception e) {
             System.out.println("Error al cargar");
         }

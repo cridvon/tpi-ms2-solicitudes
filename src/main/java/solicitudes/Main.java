@@ -2,6 +2,8 @@ package solicitudes;
 
 import java.util.ArrayList;
 
+import solicitudes.dominio.Solicitud;
+
 public class Main {
 
     static void mostrarRegistro(int r) {
@@ -47,7 +49,7 @@ public class Main {
     static void mostrarLista(String titulo, ArrayList<Solicitud> lista) {
         ArrayList<Integer> ids = new ArrayList<Integer>();
         for (int i = 0; i < lista.size(); i++) {
-            ids.add(lista.get(i).id);
+            ids.add(lista.get(i).getId());
         }
         System.out.println(titulo + ": " + ids);
     }
@@ -90,6 +92,6 @@ public class Main {
 
         System.out.println("== 6. Persistencia ==");
         SolicitudManager m2 = new SolicitudManager();
-        System.out.println("Solicitudes recuperadas del archivo: " + m2.l.size());
+        System.out.println("Solicitudes recuperadas del archivo: " + m2.cantidad());
     }
 }
